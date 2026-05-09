@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seykolig - Canlı Skor</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <script src="https://kit.fontawesome.com/your-code.js" crossorigin="anonymous"></script>
+</head>
+<body class="dark-mode">
+    <!-- Üst Başlık ve Filtre -->
+    <header>
+        <div class="header-top">
+            <h1>Seykolig</h1>
+            <i class="fas fa-calendar-alt"></i>
+        </div>
+        <div class="tabs">
+            <button class="active">Canlı</button>
+            <button>Bülten</button>
+            <button>Süper Lig</button>
+        </div>
+    </header>
+
+    <!-- Maç Listesi Konteynırı -->
+    <main id="match-list">
+        <div class="league-header">Türkiye Süper Lig</div>
+        <!-- Örnek Maç Kartı -->
+        <div class="match-card" onclick="openDetails(1)">
+            <div class="match-time">72'</div>
+            <div class="teams">
+                <div class="team">
+                    <span>Galatasaray</span>
+                    <span class="score">2</span>
+                </div>
+                <div class="team">
+                    <span>Fenerbahçe</span>
+                    <span class="score">0</span>
+                </div>
+            </div>
+            <div class="match-icons">
+                <i class="far fa-star fav-btn"></i>
+            </div>
+        </div>
+    </main>
+
+    <!-- Alt Menü (Bottom Nav) -->
+    <nav class="bottom-nav">
+        <div class="nav-item active"><i class="fas fa-satellite-dish"></i><span>Canlı</span></div>
+        <div class="nav-item"><i class="fas fa-list"></i><span>Bülten</span></div>
+        <div class="nav-item"><i class="fas fa-ticket-alt"></i><span>Kuponlar</span></div>
+        <div class="nav-item"><i class="fas fa-table"></i><span>Puan</span></div>
+        <div class="nav-item"><i class="fas fa-bars"></i><span>Diğer</span></div>
+    </nav>
+
+    <!-- Gol Bildirimi Pop-up -->
+    <div id="goal-popup" class="hidden">
+        <div class="popup-content">
+            <p>GOOOOOL!</p>
+            <span id="goal-team">Galatasaray</span>
+        </div>
+    </div>
+
+    <audio id="goal-sound" src="goal_sound.mp3"></audio>
+    <script src="script.js"></script>
+</body>
+</html>
+:root {
+    --bg-dark: #121212;
+    --card-bg: #1e1e1e;
+    --primary-yellow: #ffcc00;
+    --text-white: #e0e0e0;
+    --live-red: #ff3b30;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-white);
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding-bottom: 70px; /* Navigasyon için yer */
+}
+
+/* Maç Kartları */
+.match-card {
+    background: var(--card-bg);
+    margin: 8px;
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    border-left: 4px solid transparent;
+}
+
+.match-card.live {
+    border-left-color: var(--live-red);
+}
+
+.match-time {
+    color: var(--live-red);
+    font-weight: bold;
+    width: 40px;
+}
+
+.teams {
+    flex-grow: 1;
+    padding-left: 15px;
+}
+
+.team {
+    display: flex;
+    justify-content: space-between;
+    margin: 4px 0;
+    font-size: 1.1rem;
+}
+
+.score {
+    font-weight: 800;
+    color: var(--primary-yellow);
+}
+
+/* Alt Menü */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: #181818;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    border-top: 1px solid #333;
+}
+
+.nav-item {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.nav-item.active {
+    color: var(--primary-yellow);
+}
+
+/* Gol Pop-up */
+#goal-popup {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.9);
+    padding: 20px 40px;
+    border-radius: 20px;
+    border: 2px solid var(--primary-yellow);
+    z-index: 1000;
+    text-align: center;
+}
+
+.hidden { display: none; }
+// Örnek Maç Verisi
+let matches = [
+    { id: 1, home: "Galatasaray", away: "Fenerbahçe", homeScore: 2, awayScore: 0, minute: 72, isLive: true }
+];
+
+const goalSound = document.getElementById('goal-sound');
+const goalPopup = document.getElementById('goal-popup');
+
+function updateScores() {
+    // Burada gerçek bir API (örn: API-Football) kullanabilirsin.
+    // Şimdilik simülasyon:
+    console.log("Skorlar kontrol ediliyor...");
+    
+    // Rastgele bir gol senaryosu simülasyonu
+    let chance = Math.random();
+    if (chance > 0.98) { // %2 ihtimalle gol
+        triggerGoalNotification("Galatasaray");
+    }
+}
+
+function triggerGoalNotification(teamName) {
+    document.getElementById('goal-team').innerText = teamName;
+    goalPopup.classList.remove('hidden');
+    goalSound.play(); // O meşhur ses!
+
+    setTimeout(() => {
+        goalPopup.classList.add('hidden');
+    }, 5000);
+}
+
+// Saniyede bir güncelleme (Gerçekte bu süre API maliyetine göre 30sn-1dk yapılır)
+setInterval(updateScores, 1000);
+
+// Favoriye Ekleme Mantığı
+document.querySelectorAll('.fav-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        btn.classList.toggle('fas'); // Dolu yıldız
+        btn.classList.toggle('far'); // Boş yıldız
+        btn.style.color = btn.classList.contains('fas') ? '#ffcc00' : '#888';
+    });
+});
